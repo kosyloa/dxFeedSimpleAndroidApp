@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">dxFeedSimpleAndroidApp</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="address_text_view">Address:</string>
+    <string name="edit_text_address">demo.dxfeed.com:7300</string>
+    <string name="symbols_text_view">Symbol(s):</string>
+    <string name="edit_text_symbols">AAPL, IBM, ETH/USD:GDAX</string>
+    <string name="edit_text_timeout">0</string>
+    <string name="timeout_text_view">Timeout (sec)\n (0 - Inf/Default):</string>
+    <string name="test_tns_subscription_button">Test TnS Subscription</string>
+    <string name="last_quote_by_promise_button">Last Quote By Promise</string>
+</resources>
