@@ -1,7 +1,6 @@
 package com.dxfeed.dxfeedsimpleandroidapp
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -12,7 +11,6 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
-import com.dxfeed.dxfeedsimpleandroidapp.adapters.LogViewAdapter
 import com.dxfeed.dxfeedsimpleandroidapp.databinding.ActivityMainBinding
 import com.dxfeed.dxfeedsimpleandroidapp.extensions.splitSymbols
 import com.dxfeed.dxfeedsimpleandroidapp.tools.QDService
@@ -39,13 +37,22 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        findViewById<Button>(R.id.testTnSSubscriptionButton).setOnClickListener {
+        findViewById<Button>(R.id.testHistoryTnSSubscriptionButton).setOnClickListener {
             val address = findViewById<EditText>(R.id.editTextAddress).text.toString()
             val symbols = findViewById<EditText>(R.id.editTextSymbols).text.toString()
             val timeout =
                 findViewById<EditText>(R.id.editTextTimeout).text.toString().toLongOrNull() ?: 0L
 
-            qdService.testTnsSubscription(address, symbols.splitSymbols(), timeout)
+            qdService.testHistoryTnsSubscription(address, symbols.splitSymbols(), timeout)
+        }
+
+        findViewById<Button>(R.id.testStreamTnSSubscriptionButton).setOnClickListener {
+            val address = findViewById<EditText>(R.id.editTextAddress).text.toString()
+            val symbols = findViewById<EditText>(R.id.editTextSymbols).text.toString()
+            val timeout =
+                findViewById<EditText>(R.id.editTextTimeout).text.toString().toLongOrNull() ?: 0L
+
+            qdService.testStreamTnsSubscription(address, symbols.splitSymbols(), timeout)
         }
 
         val logView: RecyclerView = findViewById(R.id.logView)
