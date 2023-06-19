@@ -8,6 +8,7 @@ import kotlin.concurrent.timer
 class Speedometer(private val period: Long, private val uiLogger: UiLogger) {
     private val logger = Logging.getLogging(Speedometer::class.java)
     private var counter: AtomicLong = AtomicLong(0)
+    private var listenerCounter: AtomicLong = AtomicLong(0)
     private var lastCount: AtomicLong = AtomicLong(0)
     private var countingTimer : Timer? = Timer()
 
@@ -17,7 +18,6 @@ class Speedometer(private val period: Long, private val uiLogger: UiLogger) {
 
             logger.info("${String.format("%.3f", eventsPerSecond)} events/s")
             uiLogger.log("UI Speedometer: ${String.format("%.3f", eventsPerSecond)} events/s")
-
             lastCount.set(counter.get())
         })
     }
@@ -28,5 +28,9 @@ class Speedometer(private val period: Long, private val uiLogger: UiLogger) {
 
     fun addEvents(number: Long) {
         counter.addAndGet(number)
+    }
+
+    fun addListener(number: Long) {
+        listenerCounter.addAndGet(number)
     }
 }
