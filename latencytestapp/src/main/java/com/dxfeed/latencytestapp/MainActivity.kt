@@ -1,4 +1,4 @@
-package com.dxfeed.quotetableapp
+package com.dxfeed.latencytestapp
 
 import android.os.Bundle
 import android.os.Handler

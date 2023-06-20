@@ -1,4 +1,4 @@
-package com.dxfeed.quotetableapp
+package com.dxfeed.latencytestapp
 
 import com.devexperts.logging.Logging
 import com.dxfeed.api.DXEndpoint

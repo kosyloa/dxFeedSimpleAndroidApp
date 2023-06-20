@@ -1,4 +1,4 @@
-package com.dxfeed.quotetableapp
+package com.dxfeed.latencytestapp
 
 import android.view.LayoutInflater
 import android.view.View

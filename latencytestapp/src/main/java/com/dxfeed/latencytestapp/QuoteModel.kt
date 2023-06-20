@@ -1,4 +1,4 @@
-package com.dxfeed.quotetableapp
+package com.dxfeed.latencytestapp
 
 import com.dxfeed.event.market.Profile
 import com.dxfeed.event.market.Quote
