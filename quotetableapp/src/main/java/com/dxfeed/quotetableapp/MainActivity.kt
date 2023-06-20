@@ -32,10 +32,6 @@ class MainActivity : AppCompatActivity() {
     "PFE3"
     )
 
-    private val dataSource: Map<String, QuoteModel> = symbols.associateWith {
-        QuoteModel(it)
-    }
-
     private val adapter = QuoteAdapter(symbols)
     private val service = QDService()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,8 +45,8 @@ class MainActivity : AppCompatActivity() {
         }, eventsHandler = { events ->
             events.forEach {
                 when(it) {
-                    is Profile -> adapter.update(it as Profile)
-                    is Quote -> adapter.update(it as Quote)
+                    is Profile -> adapter.update(it)
+                    is Quote -> adapter.update(it)
                 }
             }
             Handler(Looper.getMainLooper()).post {
