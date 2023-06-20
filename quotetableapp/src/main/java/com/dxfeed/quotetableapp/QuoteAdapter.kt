@@ -1,15 +1,15 @@
 package com.dxfeed.quotetableapp
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dxfeed.event.market.Profile
 import com.dxfeed.event.market.Quote
 
-class CustomAdapter(private val mList: List<String>) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<QuoteAdapter.ViewHolder>() {
     private var greenColor: Int? = null
     private var redColor: Int? = null
     private var defaultPriceColor: Int? = null
@@ -19,28 +19,19 @@ class CustomAdapter(private val mList: List<String>) : RecyclerView.Adapter<Cust
     }
 
     fun update(quote: Quote) {
-        dataSource[quote.eventSymbol]?.let {
-            it.update(quote)
-        }
+        dataSource[quote.eventSymbol]?.update(quote)
     }
 
     fun update(profile: Profile) {
-        dataSource[profile.eventSymbol]?.let {
-            it.update(profile)
-        }
+        dataSource[profile.eventSymbol]?.update(profile)
     }
 
-    // create new views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // inflates the card_view_design view
-        // that is used to hold list item
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.card_view_design, parent, false)
-
         return ViewHolder(view)
     }
 
-    // binds the list items to a view
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val symbol = mList[position]
         val quote = dataSource[symbol]
@@ -55,25 +46,22 @@ class CustomAdapter(private val mList: List<String>) : RecyclerView.Adapter<Cust
         }
 
         holder.textView.text = symbol + "\n" + quote?.description
-        holder.askTextview.text = quote?.ask
-        holder.bidTextView.text = quote?.bid
-        holder.askTextview.setBackgroundColor(priceColor(quote?.increaseAsk))
-        holder.bidTextView.setBackgroundColor(priceColor(quote?.increasedBid))
+        holder.askButton.text = quote?.ask
+        holder.bidButton.text = quote?.bid
+        holder.askButton.setBackgroundColor(priceColor(quote?.increaseAsk))
+        holder.bidButton.setBackgroundColor(priceColor(quote?.increasedBid))
     }
 
     private fun priceColor(increased: Boolean?): Int {
-        if (increased != null) {
-            if (increased) {
+        increased?.let {
+            if (it) {
                 return greenColor!!
             } else {
-                return redColor!!
+                return  redColor!!
             }
-        } else {
-            return defaultPriceColor!!
-        }
+        } ?: return defaultPriceColor!!
     }
 
-    // return the number of the items in the list
     override fun getItemCount(): Int {
         return mList.size
     }
@@ -81,8 +69,8 @@ class CustomAdapter(private val mList: List<String>) : RecyclerView.Adapter<Cust
     // Holds the views for adding it to image and text
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val textView: TextView = itemView.findViewById(R.id.symboltextView)
-        val bidTextView: TextView = itemView.findViewById(R.id.bidTextView)
-        val askTextview: TextView = itemView.findViewById(R.id.askTextView)
+        val askButton: Button = itemView.findViewById(R.id.askButton)
+        val bidButton: Button = itemView.findViewById(R.id.bidButton)
     }
 
 

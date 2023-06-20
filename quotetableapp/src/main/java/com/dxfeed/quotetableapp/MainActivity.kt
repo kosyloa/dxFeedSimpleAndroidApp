@@ -1,10 +1,15 @@
 package com.dxfeed.quotetableapp
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dxfeed.event.market.Profile
+import com.dxfeed.event.market.Quote
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,20 +31,35 @@ class MainActivity : AppCompatActivity() {
     "INTC2",
     "PFE3"
     )
-    private val adapter = CustomAdapter(symbols)
-    private val diagnostic = Diagnostic()
-    private val service = QDService(diagnostic)
 
+    private val dataSource: Map<String, QuoteModel> = symbols.associateWith {
+        QuoteModel(it)
+    }
+
+    private val adapter = QuoteAdapter(symbols)
+    private val service = QDService()
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        service.subscribe("demo.dxfeed.com:7300", symbols, adapter)
-
+        service.subscribe("demo.dxfeed.com:7300", symbols, connectionHandler = {
+            Handler(Looper.getMainLooper()).post {
+                val connectionTextView = findViewById<TextView>(R.id.connectionTextView);
+                connectionTextView.text = it
+            }
+        }, eventsHandler = { events ->
+            events.forEach {
+                when(it) {
+                    is Profile -> adapter.update(it as Profile)
+                    is Quote -> adapter.update(it as Quote)
+                }
+            }
+            Handler(Looper.getMainLooper()).post {
+                adapter.notifyDataSetChanged()
+            }
+        })
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view);
-
-        recyclerView.setLayoutManager(LinearLayoutManager(this))
-        recyclerView.setAdapter(adapter)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
 
