@@ -43,6 +43,9 @@
 			android:textColor="@color/white"
 			app:cornerRadius="10dp"
 			android:text="Bid"
+			android:textSize="12sp"
+			android:paddingRight="0dp"
+			android:paddingLeft="0dp"
 			style="?attr/materialButtonOutlinedStyle"
 			/>
 
@@ -55,6 +58,9 @@
 			android:textColor="@color/white"
 			app:cornerRadius="10dp"
 			android:text="Ask"
+			android:textSize="12sp"
+			android:paddingRight="0dp"
+			android:paddingLeft="0dp"
 			style="?attr/materialButtonOutlinedStyle"
 			/>
 		</com.google.android.material.button.MaterialButtonToggleGroup>

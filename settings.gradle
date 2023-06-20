@@ -13,6 +13,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "dxFeedSimpleAndroidApp"
-include ':app'
 include ':quotetableapp'
-include ':latenctytestapp'
+include ':app'
