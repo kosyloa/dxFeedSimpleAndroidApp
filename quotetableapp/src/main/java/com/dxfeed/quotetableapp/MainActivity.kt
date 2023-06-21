@@ -25,11 +25,7 @@ class MainActivity : AppCompatActivity() {
     "CSCO",
     "ABCE",
     "INTC",
-    "PFE",
-    "CSCO1",
-    "ABCE1",
-    "INTC2",
-    "PFE3"
+    "PFE"
     )
 
     private val adapter = QuoteAdapter(symbols)
