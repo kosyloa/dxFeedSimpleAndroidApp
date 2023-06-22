@@ -8,17 +8,26 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dxfeed.event.market.Profile
 import com.dxfeed.event.market.Quote
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
+
 
 class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<QuoteAdapter.ViewHolder>() {
     private var greenColor: Int? = null
     private var redColor: Int? = null
     private var defaultPriceColor: Int? = null
-
+    private var symbols = ConcurrentHashMap<String, String>()
+    private var deltas = Collections.synchronizedList(listOf<Double>())
     private val dataSource: Map<String, QuoteModel> = mList.associateWith {
         QuoteModel(it)
     }
 
     fun update(quote: Quote) {
+        print(deltas)
+        synchronized(deltas) {
+
+            println(deltas)
+        }
         dataSource[quote.eventSymbol]?.update(quote)
     }
 

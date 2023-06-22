@@ -8,46 +8,41 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class QDService() {
+
+    val state: DXEndpoint.State
+        get() = endpoint?.state ?: DXEndpoint.State.NOT_CONNECTED
+
+    private var endpoint: DXEndpoint? = null
+
     private val logger = Logging.getLogging(QDService::class.java)
     private val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-    private fun DXEndpoint.State.convertConnectionState(): String {
-        return when (this) {
-            DXEndpoint.State.CONNECTING -> "Connecting \uD83D\uDFE0"
-            DXEndpoint.State.CONNECTED-> "Connected \uD83D\uDFE2"
-            DXEndpoint.State.CLOSED -> "Closed \uD83D\uDD34"
-            else -> {
-                "Not connected \uD83D\uDD34"
-            }
-        }
-    }
-    fun subscribe(address: String,
-                  symbols: List<String>,
-                  connectionHandler: (String) -> Unit,
-                  eventsHandler: (List<Any>) -> Unit){
+    fun connect(address: String,
+                symbols: List<String>,
+                connectionHandler: (DXEndpoint.State) -> Unit,
+                eventsHandler: (List<Any>) -> Unit){
         System.setProperty("com.devexperts.connector.proto.heartbeatTimeout", "10s")
 
         executorService.execute {
 
-            val endpoint = DXEndpoint.newBuilder()
+            endpoint = DXEndpoint.newBuilder()
                 .withProperty("dxfeed.aggregationPeriod", "1")
                 .build()
 
-            endpoint.addStateChangeListener {
-                val connectionState = (it.newValue as DXEndpoint.State)?.convertConnectionState()
-                connectionHandler(connectionState)
+            endpoint?.addStateChangeListener {
+                connectionHandler(it.newValue as DXEndpoint.State)
             }
-            endpoint.connect(address)
+            endpoint?.connect(address)
 
-            val quoteSubscription = endpoint.feed.createSubscription(Quote::class.java)
-            quoteSubscription.addEventListener {
+            val quoteSubscription = endpoint?.feed?.createSubscription(Quote::class.java)
+            quoteSubscription?.addEventListener {
                 eventsHandler(it)
             }
-            quoteSubscription.addSymbols(symbols)
-            val profileSubscription = endpoint.feed.createSubscription(Profile::class.java)
-            profileSubscription.addEventListener {
-                eventsHandler(it)
-            }
-            profileSubscription.addSymbols(symbols)
+            quoteSubscription?.addSymbols(symbols)
+        }
+    }
+    fun disconnect() {
+        executorService.execute {
+            endpoint?.disconnect()
         }
     }
 }
