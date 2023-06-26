@@ -10,8 +10,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dxfeed.api.DXEndpoint
+import com.dxfeed.event.market.MarketEvent
 import com.dxfeed.event.market.Profile
 import com.dxfeed.event.market.Quote
+import com.dxfeed.event.market.TimeAndSale
+import com.dxfeed.event.market.Trade
+import com.dxfeed.event.market.TradeETH
 
 class MainActivity : AppCompatActivity() {
 //    private var quoteTableLayout = findViewById<TableLayout>(R.id.quoteTableLayout)
@@ -19,9 +23,17 @@ class MainActivity : AppCompatActivity() {
     "ETH/USD:GDAX"
     )
 
+    private val eventTypes = listOf(Quote::class.java)
+
     private val adapter = QuoteAdapter(symbols)
+    private val speedometer = Speedometer(2000) {
+        Handler(Looper.getMainLooper()).post {
+            adapter.reload(it)
+        }
+    }
     private val service = QDService()
     override fun onCreate(savedInstanceState: Bundle?) {
+        eventTypes
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view);
@@ -35,7 +47,8 @@ class MainActivity : AppCompatActivity() {
                 if (service.state == DXEndpoint.State.CONNECTED) {
                     service.disconnect()
                 } else {
-                    service.connect("mddqa.in.devexperts.com:7400", symbols, connectionHandler = {
+
+                    service.connect("mddqa.in.devexperts.com:7400", symbols, eventTypes, connectionHandler = {
                         Handler(Looper.getMainLooper()).post {
                             val connectionTextView = findViewById<TextView>(R.id.connectionTextView);
                             connectionTextView.text = convertConnectionState(it)
@@ -45,17 +58,15 @@ class MainActivity : AppCompatActivity() {
                         }
                     }, eventsHandler = { events ->
                         events.forEach {
-                            when(it) {
-                                is Quote -> adapter.update(it)
-
+                            if (it is MarketEvent) {
+                                speedometer.update(it)
                             }
                         }
-                        Handler(Looper.getMainLooper()).post {
-                            adapter.notifyDataSetChanged()
-                        }
                     })
+                    speedometer.cleanTime()
                 }
             }
+        speedometer.start()
     }
 
     private fun convertConnectionState(state: DXEndpoint.State): String {
@@ -68,7 +79,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
 }

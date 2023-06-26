@@ -18,46 +18,26 @@
 		android:background="@color/cellBackground">
 
 		<TextView
-			android:id="@+id/symboltextView"
+			android:id="@+id/metricTextView"
+			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_marginStart="10dp"
-			android:maxLines="2"
 			android:layout_weight="0.5"
-			android:layout_width="0dp"
 			android:background="@color/cellBackground"
-			android:textColor="@color/white"
-			android:text="Symbol" />
-<!--		Workaround for element with corner radius-->
-		<com.google.android.material.button.MaterialButtonToggleGroup
-			android:id="@+id/toggleButton"
+			android:maxLines="2"
+			android:textColor="@color/white" />
+		<TextView
+			android:id="@+id/valueTextView"
+			android:gravity="right"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
-			android:layout_weight="0.6">
-		<Button
-			android:id="@+id/bidButton"
-			android:insetRight="3dp"
-			android:enabled="false"
-			android:layout_width="match_parent"
+			android:layout_marginStart="10dp"
+			android:layout_marginEnd="10dp"
 			android:layout_weight="0.5"
-			android:layout_height="match_parent"
-			android:textColor="@color/white"
-			app:cornerRadius="10dp"
-			android:text="Bid"
-			style="?attr/materialButtonOutlinedStyle"
-			/>
-
-			<Button
-			android:id="@+id/askButton"
-			android:enabled="false"
-			android:layout_width="match_parent"
-			android:layout_weight="0.5"
-			android:layout_height="match_parent"
-			android:textColor="@color/white"
-			app:cornerRadius="10dp"
-			android:text="Ask"
-			style="?attr/materialButtonOutlinedStyle"
-			/>
-		</com.google.android.material.button.MaterialButtonToggleGroup>
+			android:background="@color/cellBackground"
+			android:maxLines="2"
+			android:textColor="@color/white" />
+<!--		Workaround for element with corner radius-->
 	</LinearLayout>
 
 </androidx.cardview.widget.CardView>

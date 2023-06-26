@@ -3,36 +3,67 @@ package com.dxfeed.latencytestapp
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.dxfeed.event.market.Profile
-import com.dxfeed.event.market.Quote
-import java.util.Collections
-import java.util.concurrent.ConcurrentHashMap
+import com.devexperts.logging.Logging
 
+fun Long.toTimeFormat(): String {
+    val inSec = this / 1000
+    val millis = this % 1000
+    val seconds = inSec  % 60
+    val minutes = (inSec / 60) % 60
+    val hours = inSec / 3600
+    return "${"%02d".format(hours)}:${"%02d".format(minutes)}:${"%02d".format(seconds)}.${"%03d".format(millis)}"
+}
+
+private const val rateKey = "Rate of unique symbols per interval"
+private const val min = "Min, ms"
+private const val max = "Max, ms"
+private const val percentile = "99th percentile, ms"
+private const val mean = "Mean, ms"
+
+private const val stdDev = "StdDev, ms"
+
+private const val error = "Error, ms"
+
+private const val sampleSize = "Sample size (N), events"
+
+private const val measurementInterval = "Measurement interval, s"
+
+private const val runningTime = "Running time"
+
+private const val rateEvents = "Rate of events (avg), events/s"
 
 class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<QuoteAdapter.ViewHolder>() {
-    private var greenColor: Int? = null
-    private var redColor: Int? = null
-    private var defaultPriceColor: Int? = null
-    private var symbols = ConcurrentHashMap<String, String>()
-    private var deltas = Collections.synchronizedList(listOf<Double>())
-    private val dataSource: Map<String, QuoteModel> = mList.associateWith {
-        QuoteModel(it)
-    }
+    private val logger = Logging.getLogging(QuoteAdapter::class.java)
 
-    fun update(quote: Quote) {
-        print(deltas)
-        synchronized(deltas) {
+    private val dataSource = linkedMapOf<String, String>(
+        rateEvents to "",
+        rateKey to "",
+        min to "",
+        max to "",
+        percentile to "",
+        mean to "",
+        stdDev to "",
+        error to "",
+        sampleSize to "",
+        measurementInterval to "",
+        runningTime to "")
+    fun reload(metrics: Metrics) {
+        println(metrics)
+        dataSource[rateEvents] = metrics.rateOfEvent.toString()
+        dataSource[rateKey] = metrics.rateOfSymbols.toString()
+        dataSource[min] = metrics.min.toString()
+        dataSource[max] = metrics.max.toString()
+        dataSource[percentile] = metrics.percentile.toString()
+        dataSource[mean] = metrics.mean.toString()
+        dataSource[stdDev] = metrics.stdDev.toString()
+        dataSource[error] = metrics.error.toString()
+        dataSource[sampleSize] = metrics.sampleSize.toString()
+        dataSource[measurementInterval] = metrics.measureInterval.toString()
+        dataSource[runningTime] = metrics.currentTime.toTimeFormat()
 
-            println(deltas)
-        }
-        dataSource[quote.eventSymbol]?.update(quote)
-    }
-
-    fun update(profile: Profile) {
-        dataSource[profile.eventSymbol]?.update(profile)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,44 +73,21 @@ class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<Quote
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val symbol = mList[position]
-        val quote = dataSource[symbol]
-        if (greenColor == null) {
-            greenColor = holder.itemView.context.resources.getColor(R.color.green, null)
-        }
-        if (redColor == null) {
-            redColor = holder.itemView.context.resources.getColor(R.color.red, null)
-        }
-        if (defaultPriceColor == null) {
-            defaultPriceColor = holder.itemView.context.resources.getColor(R.color.priceBackground, null)
-        }
-
-        holder.textView.text = symbol + "\n" + quote?.description
-        holder.askButton.text = quote?.ask
-        holder.bidButton.text = quote?.bid
-        holder.askButton.setBackgroundColor(priceColor(quote?.increaseAsk))
-        holder.bidButton.setBackgroundColor(priceColor(quote?.increasedBid))
+        val key = dataSource.keys.elementAt(position)
+        val value = dataSource[key]
+        holder.metricTextView.text = key
+        holder.valueTextView.text = value
     }
 
-    private fun priceColor(increased: Boolean?): Int {
-        increased?.let {
-            if (it) {
-                return greenColor!!
-            } else {
-                return  redColor!!
-            }
-        } ?: return defaultPriceColor!!
-    }
 
     override fun getItemCount(): Int {
-        return mList.size
+        return dataSource.size
     }
 
     // Holds the views for adding it to image and text
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
-        val textView: TextView = itemView.findViewById(R.id.symboltextView)
-        val askButton: Button = itemView.findViewById(R.id.askButton)
-        val bidButton: Button = itemView.findViewById(R.id.bidButton)
+        val metricTextView: TextView = itemView.findViewById(R.id.metricTextView)
+        val valueTextView: TextView = itemView.findViewById(R.id.valueTextView)
     }
 
 
