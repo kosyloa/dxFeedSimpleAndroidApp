@@ -25,44 +25,43 @@
 			android:layout_weight="0.5"
 			android:layout_width="0dp"
 			android:background="@color/cellBackground"
-			android:textColor="@color/white"
-			android:text="Symbol" />
+			android:textColor="@color/white"/>
 <!--		Workaround for element with corner radius-->
+
 		<com.google.android.material.button.MaterialButtonToggleGroup
 			android:id="@+id/toggleButton"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="0.6">
-		<Button
-			android:id="@+id/bidButton"
-			android:insetRight="3dp"
-			android:enabled="false"
-			android:layout_width="match_parent"
-			android:layout_weight="0.5"
-			android:layout_height="match_parent"
-			android:textColor="@color/white"
-			app:cornerRadius="10dp"
-			android:text="Bid"
-			android:textSize="12sp"
-			android:paddingRight="0dp"
-			android:paddingLeft="0dp"
-			style="?attr/materialButtonOutlinedStyle"
-			/>
 
 			<Button
-			android:id="@+id/askButton"
-			android:enabled="false"
-			android:layout_width="match_parent"
-			android:layout_weight="0.5"
-			android:layout_height="match_parent"
-			android:textColor="@color/white"
-			app:cornerRadius="10dp"
-			android:text="Ask"
-			android:textSize="12sp"
-			android:paddingRight="0dp"
-			android:paddingLeft="0dp"
-			style="?attr/materialButtonOutlinedStyle"
-			/>
+				android:id="@+id/bidButton"
+				style="?attr/materialButtonOutlinedStyle"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="0.5"
+				android:enabled="false"
+				android:hint="@string/bid_hint"
+				android:insetRight="3dp"
+				android:paddingLeft="0dp"
+				android:paddingRight="0dp"
+				android:textColor="@color/white"
+				android:textSize="12sp"
+				app:cornerRadius="10dp" />
+
+			<Button
+				android:id="@+id/askButton"
+				style="?attr/materialButtonOutlinedStyle"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="0.5"
+				android:enabled="false"
+				android:hint="@string/ask_hint"
+				android:paddingLeft="0dp"
+				android:paddingRight="0dp"
+				android:textColor="@color/white"
+				android:textSize="12sp"
+				app:cornerRadius="10dp" />
 		</com.google.android.material.button.MaterialButtonToggleGroup>
 	</LinearLayout>
 

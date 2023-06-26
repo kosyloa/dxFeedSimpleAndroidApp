@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">QuoteTableApp</string>
+    <string name="bid_hint">bid value</string>
+    <string name="ask_hint">ask value</string>
 </resources>
