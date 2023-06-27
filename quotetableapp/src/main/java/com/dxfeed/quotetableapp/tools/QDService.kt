@@ -1,4 +1,4 @@
-package com.dxfeed.latencytestapp.tools
+package com.dxfeed.quotetableapp.tools
 
 import com.devexperts.logging.Logging
 import com.dxfeed.api.DXEndpoint
@@ -7,9 +7,6 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class QDService() {
-    val state: DXEndpoint.State
-        get() = endpoint?.state ?: DXEndpoint.State.NOT_CONNECTED
-    private var endpoint: DXEndpoint? = null
     private val executorService: ExecutorService = Executors.newFixedThreadPool(1)
 
     fun connect(address: String,
@@ -20,11 +17,14 @@ class QDService() {
         System.setProperty("com.devexperts.connector.proto.heartbeatTimeout", "10s")
 
         executorService.execute {
-            endpoint = DXEndpoint.newBuilder().build()
-            endpoint?.addStateChangeListener {
+            val endpoint = DXEndpoint
+                .newBuilder()
+                .withProperty("dxfeed.aggregationPeriod", "1")
+                .build()
+            endpoint.addStateChangeListener {
                 connectionHandler(it.newValue as DXEndpoint.State)
             }
-            endpoint?.connect(address)
+            endpoint.connect(address)
 
             eventTypes.forEach { eventType ->
                 val subscription = endpoint?.feed?.createSubscription(eventType)
@@ -33,11 +33,6 @@ class QDService() {
                 }
                 subscription?.addSymbols(symbols)
             }
-        }
-    }
-    fun disconnect() {
-        executorService.execute {
-            endpoint?.disconnect()
         }
     }
 }

@@ -18,7 +18,7 @@
 		android:background="@color/cellBackground">
 
 		<TextView
-			android:id="@+id/symboltextView"
+			android:id="@+id/symbol_text_view"
 			android:layout_height="match_parent"
 			android:layout_marginStart="10dp"
 			android:maxLines="2"
@@ -35,7 +35,7 @@
 			android:layout_weight="0.6">
 
 			<Button
-				android:id="@+id/bidButton"
+				android:id="@+id/bid_button"
 				style="?attr/materialButtonOutlinedStyle"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
@@ -50,7 +50,7 @@
 				app:cornerRadius="10dp" />
 
 			<Button
-				android:id="@+id/askButton"
+				android:id="@+id/ask_button"
 				style="?attr/materialButtonOutlinedStyle"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"

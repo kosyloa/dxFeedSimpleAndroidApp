@@ -14,6 +14,7 @@ import com.dxfeed.api.DXEndpoint
 import com.dxfeed.event.market.MarketEvent
 import com.dxfeed.event.market.Quote
 import com.dxfeed.latencytestapp.adapters.QuoteAdapter
+import com.dxfeed.latencytestapp.extensions.stringValue
 import com.dxfeed.latencytestapp.tools.QDService
 import com.dxfeed.latencytestapp.tools.Speedometer
 
@@ -31,14 +32,13 @@ class MainActivity : AppCompatActivity() {
     }
     private val service = QDService()
     override fun onCreate(savedInstanceState: Bundle?) {
-        eventTypes
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view);
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-        findViewById<TextView>(R.id.connectionTextView).text = convertConnectionState(DXEndpoint.State.NOT_CONNECTED)
+        findViewById<TextView>(R.id.connectionTextView).text = DXEndpoint.State.NOT_CONNECTED.stringValue(this)
 
         findViewById<Button>(R.id.connect_button)
             .setOnClickListener {
@@ -48,33 +48,20 @@ class MainActivity : AppCompatActivity() {
                     service.connect(findViewById<EditText>(R.id.address_text_view).text.toString(), symbols, eventTypes, connectionHandler = {
                         Handler(Looper.getMainLooper()).post {
                             val connectionTextView = findViewById<TextView>(R.id.connectionTextView);
-                            connectionTextView.text = convertConnectionState(it)
+                            connectionTextView.text = it.stringValue(this)
                             findViewById<Button>(R.id.connect_button).text  =
                                 if (it == DXEndpoint.State.CONNECTED) getString(R.string.disconnect)
                                 else getString(R.string.connect)
                         }
                     }, eventsHandler = { events ->
                         events.forEach {
-                            if (it is MarketEvent) {
-                                speedometer.update(it)
-                            }
+                            speedometer.update(it)
                         }
                     })
                     speedometer.cleanTime()
                 }
             }
         speedometer.start()
-    }
-
-    private fun convertConnectionState(state: DXEndpoint.State): String {
-        return when (state) {
-            DXEndpoint.State.CONNECTING -> getString(R.string.state_connecting)
-            DXEndpoint.State.CONNECTED-> getString(R.string.state_connected)
-            DXEndpoint.State.CLOSED -> getString(R.string.state_closed)
-            else -> {
-                getString(R.string.state_other)
-            }
-        }
     }
 
 }
