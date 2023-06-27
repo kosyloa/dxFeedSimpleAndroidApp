@@ -1,4 +1,4 @@
-package com.dxfeed.latencytestapp
+package com.dxfeed.latencytestapp.tools
 
 import com.devexperts.logging.Logging
 import com.dxfeed.api.DXEndpoint

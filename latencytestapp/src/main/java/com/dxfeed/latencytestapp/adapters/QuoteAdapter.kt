@@ -1,4 +1,4 @@
-package com.dxfeed.latencytestapp
+package com.dxfeed.latencytestapp.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,36 +6,24 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.devexperts.logging.Logging
+import com.dxfeed.latencytestapp.tools.Metrics
+import com.dxfeed.latencytestapp.R
+import com.dxfeed.latencytestapp.extensions.*
 
-fun Long.toTimeFormat(): String {
-    val inSec = this / 1000
-    val millis = this % 1000
-    val seconds = inSec  % 60
-    val minutes = (inSec / 60) % 60
-    val hours = inSec / 3600
-    return "${"%02d".format(hours)}:${"%02d".format(minutes)}:${"%02d".format(seconds)}.${"%03d".format(millis)}"
-}
-
-private const val rateKey = "Rate of unique symbols per interval"
-private const val min = "Min, ms"
-private const val max = "Max, ms"
-private const val percentile = "99th percentile, ms"
-private const val mean = "Mean, ms"
-
-private const val stdDev = "StdDev, ms"
-
-private const val error = "Error, ms"
-
-private const val sampleSize = "Sample size (N), events"
-
-private const val measurementInterval = "Measurement interval, s"
-
-private const val runningTime = "Running time"
-
-private const val rateEvents = "Rate of events (avg), events/s"
 
 class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<QuoteAdapter.ViewHolder>() {
     private val logger = Logging.getLogging(QuoteAdapter::class.java)
+    private val rateKey = "Rate of unique symbols per interval"
+    private val min = "Min, ms"
+    private val max = "Max, ms"
+    private val percentile = "99th percentile, ms"
+    private val mean = "Mean, ms"
+    private val stdDev = "StdDev, ms"
+    private val error = "Error, ms"
+    private val sampleSize = "Sample size (N), events"
+    private val measurementInterval = "Measurement interval, s"
+    private val runningTime = "Running time"
+    private val rateEvents = "Rate of events (avg), events/s"
 
     private val dataSource = linkedMapOf<String, String>(
         rateEvents to "",
@@ -50,19 +38,17 @@ class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<Quote
         measurementInterval to "",
         runningTime to "")
     fun reload(metrics: Metrics) {
-        println(metrics)
-        dataSource[rateEvents] = metrics.rateOfEvent.toString()
+        dataSource[rateEvents] = metrics.rateOfEvent.format(2)
         dataSource[rateKey] = metrics.rateOfSymbols.toString()
-        dataSource[min] = metrics.min.toString()
-        dataSource[max] = metrics.max.toString()
-        dataSource[percentile] = metrics.percentile.toString()
-        dataSource[mean] = metrics.mean.toString()
-        dataSource[stdDev] = metrics.stdDev.toString()
-        dataSource[error] = metrics.error.toString()
+        dataSource[min] = metrics.min.format(2)
+        dataSource[max] = metrics.max.format(2)
+        dataSource[percentile] = metrics.percentile.format(2)
+        dataSource[mean] = metrics.mean.format(2)
+        dataSource[stdDev] = metrics.stdDev.format(2)
+        dataSource[error] = metrics.error.format(2)
         dataSource[sampleSize] = metrics.sampleSize.toString()
         dataSource[measurementInterval] = metrics.measureInterval.toString()
         dataSource[runningTime] = metrics.currentTime.toTimeFormat()
-
         notifyDataSetChanged()
     }
 
@@ -78,7 +64,6 @@ class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<Quote
         holder.metricTextView.text = key
         holder.valueTextView.text = value
     }
-
 
     override fun getItemCount(): Int {
         return dataSource.size

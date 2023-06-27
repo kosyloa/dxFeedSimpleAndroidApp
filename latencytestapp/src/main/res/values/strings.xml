@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">QuoteTableApp</string>
+    <string name="address_hint">address text field</string>
     <string name="address">mddqa.in.devexperts.com:7400</string>
     <string name="connect_button">Connect</string>
     <string name="connect">Connect</string>

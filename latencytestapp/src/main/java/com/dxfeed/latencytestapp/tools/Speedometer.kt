@@ -1,4 +1,4 @@
-package com.dxfeed.latencytestapp
+package com.dxfeed.latencytestapp.tools
 
 import com.devexperts.logging.Logging
 import com.dxfeed.event.market.MarketEvent
@@ -15,7 +15,6 @@ import kotlin.concurrent.timer
 import kotlin.math.pow
 import kotlin.math.sqrt
 import java.time.Duration
-import kotlin.math.log
 
 
 data class Metrics(
@@ -51,11 +50,13 @@ class Speedometer(private val period: Long, private val handler: (Metrics) -> Un
             val currentSymbols = symbols.toList()
             val min = currentDeltas.minByOrNull { it } ?: 0.0
             val max = currentDeltas.maxByOrNull { it } ?: 0.0
-            val mean = currentDeltas.average()
-            val percentile = Speedometer.calculatePercentile(currentDeltas, 0.99)
-            val stdDev = Speedometer.calculateStdDev(currentDeltas)
-            val stdErr = Speedometer.calculateStdErr(currentDeltas, stdDev)
-
+            val mean = if (currentDeltas.average().isNaN()) 0.0 else currentDeltas.average()
+            val percentile = calculatePercentile(currentDeltas, 0.99)
+            val stdDev = calculateStdDev(currentDeltas)
+            var stdErr = calculateStdErr(currentDeltas, stdDev)
+            if (stdErr.isNaN()) {
+                stdErr = 0.0
+            }
             deltas.clear()
             symbols.clear()
             val metrics = Metrics(

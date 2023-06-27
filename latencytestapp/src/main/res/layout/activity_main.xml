@@ -9,14 +9,15 @@
 
 
     <EditText
-        android:id="@+id/plain_text_input"
+        android:id="@+id/address_text_view"
+        android:imeOptions="actionDone"
         android:layout_width="0dp"
         android:layout_height="61dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="10dp"
-        android:inputType="text"
-        android:labelFor="@string/address"
+        android:hint="@string/address_hint"
         android:text="@string/address"
+        android:inputType="text"
         android:textColor="@color/white"
         app:layout_constraintEnd_toStartOf="@+id/connect_button"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +43,7 @@
         app:layout_constraintBottom_toTopOf="@+id/connectionTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/plain_text_input" />
+        app:layout_constraintTop_toBottomOf="@+id/address_text_view" />
 
     <TextView
         android:id="@+id/connectionTextView"
