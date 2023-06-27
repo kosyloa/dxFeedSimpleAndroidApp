@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dxfeed.api.DXEndpoint
 import com.dxfeed.event.market.MarketEvent
 import com.dxfeed.event.market.Quote
+import com.dxfeed.event.market.TimeAndSale
 import com.dxfeed.perftestapp.adapters.QuoteAdapter
 import com.dxfeed.perftestapp.extensions.stringValue
 import com.dxfeed.perftestapp.tools.QDService
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private val symbols = listOf(
     "ETH/USD:GDAX"
     )
-    private val eventTypes = listOf(Quote::class.java)
+    private val eventTypes = listOf(TimeAndSale::class.java)
 
     private val adapter = QuoteAdapter(symbols)
     private val speedometer = Speedometer(2000) {
@@ -53,10 +54,8 @@ class MainActivity : AppCompatActivity() {
                                 if (it == DXEndpoint.State.CONNECTED) getString(R.string.disconnect)
                                 else getString(R.string.connect)
                         }
-                    }, eventsHandler = { events ->
-                        events.forEach {
-                            speedometer.update(it)
-                        }
+                    }, eventsHandler = {
+                        speedometer.update(it)
                     })
                     speedometer.cleanTime()
                 }

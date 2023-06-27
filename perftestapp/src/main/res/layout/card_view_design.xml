@@ -22,7 +22,7 @@
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_marginStart="10dp"
-			android:layout_weight="0.5"
+			android:layout_weight="0.75"
 			android:background="@color/cellBackground"
 			android:maxLines="2"
 			android:textColor="@color/white" />

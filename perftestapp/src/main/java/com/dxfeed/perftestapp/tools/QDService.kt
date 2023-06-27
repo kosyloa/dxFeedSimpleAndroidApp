@@ -16,7 +16,7 @@ class QDService() {
                 symbols: List<String>,
                 eventTypes: List<Class<out MarketEvent>>,
                 connectionHandler: (DXEndpoint.State) -> Unit,
-                eventsHandler: (List<MarketEvent>) -> Unit){
+                eventsHandler: (Int) -> Unit){
         System.setProperty("com.devexperts.connector.proto.heartbeatTimeout", "10s")
 
         executorService.execute {
@@ -29,7 +29,7 @@ class QDService() {
             eventTypes.forEach { eventType ->
                 val subscription = endpoint?.feed?.createSubscription(eventType)
                 subscription?.addEventListener {
-                    eventsHandler(it)
+                    eventsHandler(it.size)
                 }
                 subscription?.addSymbols(symbols)
             }

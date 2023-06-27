@@ -13,41 +13,20 @@ import com.dxfeed.perftestapp.extensions.*
 
 class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<QuoteAdapter.ViewHolder>() {
     private val logger = Logging.getLogging(QuoteAdapter::class.java)
-    private val rateKey = "Rate of unique symbols per interval"
-    private val min = "Min, ms"
-    private val max = "Max, ms"
-    private val percentile = "99th percentile, ms"
-    private val mean = "Mean, ms"
-    private val stdDev = "StdDev, ms"
-    private val error = "Error, ms"
-    private val sampleSize = "Sample size (N), events"
-    private val measurementInterval = "Measurement interval, s"
     private val runningTime = "Running time"
     private val rateEvents = "Rate of events (avg), events/s"
+    private val rateListeners = "Rate of listener calls, calls/s"
+    private val eventsPerCall = "Number of events in call (avg), events"
 
     private val dataSource = linkedMapOf<String, String>(
         rateEvents to "",
-        rateKey to "",
-        min to "",
-        max to "",
-        percentile to "",
-        mean to "",
-        stdDev to "",
-        error to "",
-        sampleSize to "",
-        measurementInterval to "",
+        rateListeners to "",
+        eventsPerCall to "",
         runningTime to "")
     fun reload(metrics: Metrics) {
-        dataSource[rateEvents] = metrics.rateOfEvent.format(2)
-        dataSource[rateKey] = metrics.rateOfSymbols.toString()
-        dataSource[min] = metrics.min.format(2)
-        dataSource[max] = metrics.max.format(2)
-        dataSource[percentile] = metrics.percentile.format(2)
-        dataSource[mean] = metrics.mean.format(2)
-        dataSource[stdDev] = metrics.stdDev.format(2)
-        dataSource[error] = metrics.error.format(2)
-        dataSource[sampleSize] = metrics.sampleSize.toString()
-        dataSource[measurementInterval] = metrics.measureInterval.toString()
+        dataSource[rateEvents] = metrics.rateOfEvent.format(0)
+        dataSource[rateListeners] = metrics.rateOfListeners.format(0)
+        dataSource[eventsPerCall] = if (metrics.numberOfEventsInCall.isNaN()) "0.0" else metrics.numberOfEventsInCall.format(0)
         dataSource[runningTime] = metrics.currentTime.toTimeFormat()
         notifyDataSetChanged()
     }

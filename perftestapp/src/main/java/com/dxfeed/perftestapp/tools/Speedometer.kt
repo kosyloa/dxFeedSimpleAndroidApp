@@ -15,14 +15,18 @@ import kotlin.concurrent.timer
 import kotlin.math.pow
 import kotlin.math.sqrt
 import java.time.Duration
+import java.util.concurrent.atomic.AtomicLong
 
 class Speedometer(private val period: Long, private val handler: (Metrics) -> Unit) {
     private var countingTimer : Timer? = Timer()
-
-    private var symbols = ConcurrentHashMap<String, String>()
-    private var deltas = ConcurrentLinkedQueue<Double>()
     private val logger = Logging.getLogging(Speedometer::class.java)
     private var startDate: LocalTime? = null
+
+    private var lastCount: AtomicLong = AtomicLong(0)
+    private var counter: AtomicLong = AtomicLong(0)
+
+    private var listenerCounter: AtomicLong = AtomicLong(0)
+    private var lastListenerCounter: AtomicLong = AtomicLong(0)
 
     fun start() {
 
@@ -31,30 +35,14 @@ class Speedometer(private val period: Long, private val handler: (Metrics) -> Un
                 startDate = LocalTime.now()
             }
             val dur = Duration.between(startDate, LocalTime.now())
-            val currentDeltas = deltas.toList()
-            val currentSymbols = symbols.toList()
-            val min = currentDeltas.minByOrNull { it } ?: 0.0
-            val max = currentDeltas.maxByOrNull { it } ?: 0.0
-            val mean = if (currentDeltas.average().isNaN()) 0.0 else currentDeltas.average()
-            val percentile = calculatePercentile(currentDeltas, 0.99)
-            val stdDev = calculateStdDev(currentDeltas)
-            var stdErr = calculateStdErr(currentDeltas, stdDev)
-            if (stdErr.isNaN()) {
-                stdErr = 0.0
-            }
-            deltas.clear()
-            symbols.clear()
+            val eventsPerSecond = (counter.get() - lastCount.get()).toDouble() / period.toDouble() * 1000
+            val listenersPerSeconds = (listenerCounter.get() - lastListenerCounter.get()).toDouble() / period.toDouble() * 1000
+            lastCount.set(counter.get())
+            lastListenerCounter.set(listenerCounter.get())
             val metrics = Metrics(
-                rateOfEvent = currentDeltas.size.toDouble() / (period / 1000),
-                min = min,
-                max = max,
-                mean = mean,
-                percentile = percentile,
-                sampleSize = currentDeltas.size,
-                stdDev = stdDev,
-                error = stdErr,
-                rateOfSymbols = currentSymbols.size,
-                measureInterval = period / 1000,
+                rateOfEvent = eventsPerSecond,
+                rateOfListeners = listenersPerSeconds,
+                numberOfEventsInCall = eventsPerSecond / listenersPerSeconds,
                 currentTime = dur.toMillis())
             handler(metrics)
         })
@@ -62,27 +50,9 @@ class Speedometer(private val period: Long, private val handler: (Metrics) -> Un
     fun cleanTime() {
         startDate = null
     }
-    fun update(event: MarketEvent) {
-        val currentTimestamp = System.currentTimeMillis().toDouble()
-
-        when (event) {
-            is Quote -> {
-                symbols[event.eventSymbol] = event.eventSymbol
-                deltas.add(currentTimestamp - event.time)
-            }
-            is TimeAndSale -> {
-                symbols[event.eventSymbol] = event.eventSymbol
-                deltas.add(currentTimestamp - event.time)
-            }
-            is TradeETH -> {
-                symbols[event.eventSymbol] = event.eventSymbol
-                deltas.add(currentTimestamp - event.time)
-            }
-            is Trade -> {
-                symbols[event.eventSymbol] = event.eventSymbol
-                deltas.add(currentTimestamp - event.time)
-            }
-        }
+    fun update(size: Int) {
+        counter.addAndGet(size.toLong())
+        listenerCounter.addAndGet(1)
     }
 
     companion object {

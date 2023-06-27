@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val uiLogger = UiLogger(500)
-    private val speedometer = Speedometer(5000, uiLogger)
+    private val speedometer = Speedometer(2000, uiLogger)
     private val qdService = QDService(speedometer, uiLogger)
 
 

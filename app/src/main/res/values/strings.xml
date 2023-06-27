@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="address_text_view">Address:</string>
-    <string name="edit_text_address">demo.dxfeed.com:7300</string>
+    <string name="edit_text_address">10.0.2.2:6666</string>
     <string name="symbols_text_view">Symbol(s):</string>
     <string name="edit_text_symbols">ETH/USD:GDAX</string>
     <string name="edit_text_timeout">0</string>
