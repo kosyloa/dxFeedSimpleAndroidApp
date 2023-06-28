@@ -23,13 +23,13 @@ class SystemUsageManager(private val context: Context) {
     private fun sampleCPU(): Double {
         val lMyProcessID = Process.myPid()
         try {
-            var Result: String
+            var result = ""
             val p = Runtime.getRuntime().exec("top -o pid,%cpu -n 1 -p $lMyProcessID")
             val br = BufferedReader(InputStreamReader(p.getInputStream()))
-            while (br.readLine().also { Result = it } != null) {
-                if (Result.contains("$lMyProcessID")) {
-                    println(Result)
-                    val info = Result.trim { it <= ' ' }
+            while (br.readLine().also { result = it } != null) {
+                if (result.contains("$lMyProcessID")) {
+                    println(result)
+                    val info = result.trim { it <= ' ' }
                         .replace(" +".toRegex(), " ").split(" ".toRegex())
                         .dropLastWhile { it.isEmpty() }
                         .toTypedArray()

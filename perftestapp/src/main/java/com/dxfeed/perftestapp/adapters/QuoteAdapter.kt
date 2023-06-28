@@ -43,8 +43,8 @@ class QuoteAdapter(private val mList: List<String>) : RecyclerView.Adapter<Quote
         dataSource[eventsPerCall] = if (metrics.numberOfEventsInCall.isNaN()) "0.0" else metrics.numberOfEventsInCall.format(0)
         dataSource[currentMemoryUsage] = metrics.currentMemoryUsage.toString()
         dataSource[peakMemoryUsage] = metrics.peakMemoryUsage.toString()
-        dataSource[currentCpuUsage] = metrics.currentCpuUsage.toString()
-        dataSource[peakCpuUsage] = metrics.peakCpuUsage.toString()
+        dataSource[currentCpuUsage] = metrics.currentCpuUsage.format(2)
+        dataSource[peakCpuUsage] = metrics.peakCpuUsage.format(2)
         dataSource[runningTime] = metrics.currentTime.toTimeFormat()
         notifyDataSetChanged()
     }
