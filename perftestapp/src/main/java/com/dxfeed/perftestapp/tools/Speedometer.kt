@@ -1,23 +1,18 @@
 package com.dxfeed.perftestapp.tools
 
 import com.devexperts.logging.Logging
-import com.dxfeed.event.market.MarketEvent
-import com.dxfeed.event.market.Quote
-import com.dxfeed.event.market.TimeAndSale
-import com.dxfeed.event.market.Trade
-import com.dxfeed.event.market.TradeETH
 import java.time.LocalTime
 
 import java.util.Timer
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.concurrent.timer
 import kotlin.math.pow
 import kotlin.math.sqrt
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicLong
 
-class Speedometer(private val period: Long, private val handler: (Metrics) -> Unit) {
+class Speedometer(private val period: Long,
+                  private val systemUsageManager: SystemUsageManager,
+                  private val handler: (Metrics) -> Unit) {
     private var countingTimer : Timer? = Timer()
     private val logger = Logging.getLogging(Speedometer::class.java)
     private var startDate: LocalTime? = null
@@ -27,7 +22,11 @@ class Speedometer(private val period: Long, private val handler: (Metrics) -> Un
 
     private var listenerCounter: AtomicLong = AtomicLong(0)
     private var lastListenerCounter: AtomicLong = AtomicLong(0)
+    private var memoryUsage = 0L
+    private var peakMemoryUsage = 0L
 
+    private var cpuUsage = 0.0
+    private var peakcpuUsage = 0.0
     fun start() {
 
         countingTimer = timer("CountingTimer", false, 0L, period, action = {
@@ -39,10 +38,18 @@ class Speedometer(private val period: Long, private val handler: (Metrics) -> Un
             val listenersPerSeconds = (listenerCounter.get() - lastListenerCounter.get()).toDouble() / period.toDouble() * 1000
             lastCount.set(counter.get())
             lastListenerCounter.set(listenerCounter.get())
+            memoryUsage = systemUsageManager.memoryUsage()
+            peakMemoryUsage = java.lang.Long.max(memoryUsage, peakMemoryUsage)
+            cpuUsage = systemUsageManager.cpuUsage()
+            peakcpuUsage = java.lang.Double.max(cpuUsage, peakcpuUsage)
             val metrics = Metrics(
                 rateOfEvent = eventsPerSecond,
                 rateOfListeners = listenersPerSeconds,
                 numberOfEventsInCall = eventsPerSecond / listenersPerSeconds,
+                currentMemoryUsage = memoryUsage,
+                peakMemoryUsage = peakMemoryUsage,
+                currentCpuUsage = cpuUsage,
+                peakCpuUsage = peakcpuUsage,
                 currentTime = dur.toMillis())
             handler(metrics)
         })

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">dxPerfTest</string>
     <string name="address_hint">address text field</string>
-    <string name="address">10.0.2.2:6666</string>
+    <string name="address">192.168.178.101:6666</string>
     <string name="connect_button">Connect</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>

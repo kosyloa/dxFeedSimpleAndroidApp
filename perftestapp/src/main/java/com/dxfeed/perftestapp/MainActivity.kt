@@ -1,5 +1,6 @@
 package com.dxfeed.perftestapp
 
+import android.app.ActivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,13 +12,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dxfeed.api.DXEndpoint
-import com.dxfeed.event.market.MarketEvent
-import com.dxfeed.event.market.Quote
 import com.dxfeed.event.market.TimeAndSale
 import com.dxfeed.perftestapp.adapters.QuoteAdapter
 import com.dxfeed.perftestapp.extensions.stringValue
 import com.dxfeed.perftestapp.tools.QDService
 import com.dxfeed.perftestapp.tools.Speedometer
+import com.dxfeed.perftestapp.tools.SystemUsageManager
+
 
 class MainActivity : AppCompatActivity() {
     private val symbols = listOf(
@@ -26,9 +27,11 @@ class MainActivity : AppCompatActivity() {
     private val eventTypes = listOf(TimeAndSale::class.java)
 
     private val adapter = QuoteAdapter(symbols)
-    private val speedometer = Speedometer(2000) {
-        Handler(Looper.getMainLooper()).post {
-            adapter.reload(it)
+    private val speedometer: Speedometer by lazy {
+        Speedometer(2000, SystemUsageManager(this)) {
+            Handler(Looper.getMainLooper()).post {
+                adapter.reload(it)
+            }
         }
     }
     private val service = QDService()
@@ -62,5 +65,4 @@ class MainActivity : AppCompatActivity() {
             }
         speedometer.start()
     }
-
 }

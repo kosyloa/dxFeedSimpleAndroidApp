@@ -38,6 +38,7 @@ class QDService() {
     fun disconnect() {
         executorService.execute {
             endpoint?.disconnect()
+//            endpoint?.close()
         }
     }
 }
