@@ -8,12 +8,14 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven {
+            url 'https://dxfeed.jfrog.io/artifactory/maven'
+        }
         google()
         mavenCentral()
     }
 }
 rootProject.name = "dxFeedSimpleAndroidApp"
 include ':quotetableapp'
-include ':app'
 include ':latencytestapp'
 include ':perftestapp'

@@ -47,11 +47,11 @@ class QuoteAdapter(mList: List<String>, context: Context) : RecyclerView.Adapter
     private fun priceColor(increased: Boolean?): Int {
         increased?.let {
             if (it) {
-                return greenColor!!
+                return greenColor
             } else {
-                return  redColor!!
+                return  redColor
             }
-        } ?: return defaultPriceColor!!
+        } ?: return defaultPriceColor
     }
 
     override fun getItemCount(): Int {

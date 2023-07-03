@@ -17,7 +17,6 @@ import com.dxfeed.quotetableapp.tools.QDService
 
 
 class MainActivity : AppCompatActivity() {
-//    private var quoteTableLayout = findViewById<TableLayout>(R.id.quoteTableLayout)
     private val symbols = listOf(
     "AAPL",
     "IBM",
